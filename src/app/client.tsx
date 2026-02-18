@@ -1,15 +1,22 @@
-"use client";
+import { Button } from "@/components/ui/button";
+import { requireAuth } from "@/lib/auth-utils";
+import { caller } from "@/trpc/server";
+import { LogoutButton } from "./logout";
 
-import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+const Page = async () => {
+  await requireAuth();
 
-export const Client = () => {
-  const trpc = useTRPC();
-  const { data: users } = useSuspenseQuery(trpc.getUsers.queryOptions());
+  const data = await caller.getUsers();
 
   return (
-    <div>
-      Client component: {JSON.stringify(users)}
+    <div className="min-h-screen min-w-screen flex items-center justify-center flex-col gap-y-6">
+      protected server component
+      <div>
+      {JSON.stringify(data, null ,2)}
+      </div>
+      <LogoutButton />
     </div>
   );
 };
+
+export default Page;
